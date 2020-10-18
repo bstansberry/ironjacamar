@@ -8,6 +8,10 @@ build.debug.xml
 # /
 **/bin
 **/eclipse-target
+**/.gradle
+**/gradle
+**/gradlew
+**/gradlew.bat
 /build
 /target
 /reports
@@ -42,3 +46,9 @@ logtest
 ${test.dir}/
 .checkstyle
 
+
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build

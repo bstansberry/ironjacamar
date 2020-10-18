@@ -111,7 +111,20 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                break;
             }
             case START_ELEMENT : {
-               if ("1.7".equals(reader.getAttributeValue(null, "version")))
+               if ("2.0".equals(reader.getAttributeValue(null, "version")))
+               {
+                  switch (Tag.forName(reader.getLocalName()))
+                  {
+                     case CONNECTOR : {
+                        connector = parseConnector20(reader);
+                        break;
+                     }
+                     default :
+                        throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
+                  }
+
+               }
+               else if ("1.7".equals(reader.getAttributeValue(null, "version")))
                {
                   switch (Tag.forName(reader.getLocalName()))
                   {
@@ -449,7 +462,15 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
       throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
-   private Connector parseConnector17(XMLStreamReader reader) throws XMLStreamException, ParserException
+   private Connector parseConnector20(XMLStreamReader reader) throws XMLStreamException, ParserException {
+      return parseConnector17Plus(reader, Version.V_20);
+   }
+
+   private Connector parseConnector17(XMLStreamReader reader) throws XMLStreamException, ParserException {
+      return parseConnector17Plus(reader, Version.V_17);
+   }
+
+   private Connector parseConnector17Plus(XMLStreamReader reader, Version version) throws XMLStreamException, ParserException
    {
       boolean metadataComplete = Boolean.valueOf(reader.getAttributeValue(null,
          XML.Connector17Attribute.METADATA_COMPLETE.getLocalName()));;
@@ -477,7 +498,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                   displayName.trimToSize();
                   requiredWorkContext.trimToSize();
                   //building and returning object
-                  return new ConnectorImpl(Version.V_17, moduleName, vendorName, eisType, resourceadapterVersion,
+                  return new ConnectorImpl(version, moduleName, vendorName, eisType, resourceadapterVersion,
                                            license, resourceadapter, requiredWorkContext, metadataComplete,
                                            description, displayName, icon, id);
                }
